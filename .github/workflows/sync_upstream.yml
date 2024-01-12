@@ -27,7 +27,7 @@ jobs:
     - name: Check For Changes
       id: check_changes
       run: |
-        if git diff --quiet: then
+        if git diff --quiet; then
           echo "no changes to commit"
           echo "::set-output name=changes::false"
         else
