@@ -2,10 +2,8 @@ name: Sync Fork
 
 on:
   schedule:
-    # Schedule the workflow to run every day. You can adjust the cron syntax as needed.
     - cron: '0 0 * * *'  # midnight every day
   workflow_dispatch:
-    # This allows you to manually trigger the workflow from the Actions tab on GitHub.
 
 jobs:
   sync:
@@ -24,18 +22,18 @@ jobs:
         git fetch upstream
         git checkout master
         git merge upstream/master --allow-unrelated-histories
+    
     - name: Check For Changes
-      id: check_changes
       run: |
         if git diff --quiet; then
           echo "no changes to commit"
-          echo "::set-output name=changes::false"
+          echo "CHANGES=false" >> $GITHUB_ENV
         else
           echo "changes detected"
-          echo "::set-output name:changes::true"
+          echo "CHANGES=true" >> $GITHUB_ENV
         fi
 
     - name: Push Changes
-      if: steps.check_changes.outputs.changes == 'true'
+      if: env.CHANGES == 'true'
       run: |
         git push
