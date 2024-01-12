@@ -24,4 +24,18 @@ jobs:
         git fetch upstream
         git checkout master
         git merge upstream/master --allow-unrelated-histories
+    - name: Check For Changes
+      id: check_changes
+      run: |
+        if git diff --quiet: then
+          echo "no changes to commit"
+          echo "::set-output name=changes::false"
+        else
+          echo "changes detected"
+          echo "::set-output name:changes::true"
+        fi
+
+    - name: Push Changes
+      if: steps.check_changes.outputs.changes == 'true'
+      run: |
         git push
